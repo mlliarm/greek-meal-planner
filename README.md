@@ -16,6 +16,14 @@ The app generates a 7-day meal plan that tries to satisfy:
 
 The UI supports both English and Greek, with a language switch in the header.
 
+## Source Of Truth
+
+The runtime source of truth is in `app.js`:
+
+- `KNOWLEDGE_PL` and `PLANNER_PL` are embedded and consulted directly by Tau Prolog in the browser.
+- `knowledge.pl` and `planner.pl` are kept as human-readable snapshots for reference and review.
+- If there is ever a mismatch, treat `app.js` as authoritative and update snapshot files accordingly.
+
 ## How It Works
 
 ### 1. Knowledge Base (inlined Prolog facts)
@@ -82,8 +90,8 @@ Language choice is saved to `localStorage`.
 - [index.html](index.html): Page structure and language buttons.
 - [style.css](style.css): Styling and responsive layout.
 - [app.js](app.js): Prolog source, planner logic, rendering, localization.
-- [knowledge.pl](knowledge.pl): Reference knowledge file (not required at runtime).
-- [planner.pl](planner.pl): Reference planner file (not required at runtime).
+- [knowledge.pl](knowledge.pl): Snapshot of the embedded knowledge base in `app.js` (not required at runtime).
+- [planner.pl](planner.pl): Snapshot of the embedded planner rules in `app.js` (not required at runtime).
 - [.nojekyll](.nojekyll): Prevents GitHub Pages Jekyll processing.
 
 ## Future Improvements
