@@ -99,4 +99,3 @@ Language choice is saved to `localStorage`.
 - Add dish editor UI (add/remove dishes without code changes).
 - Add hard category constraints per week.
 - Add shopping list generation from selected plan.
-- Add printable weekly menu view.
