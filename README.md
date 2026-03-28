@@ -86,35 +86,6 @@ Language choice is saved to `localStorage`.
 - [planner.pl](planner.pl): Reference planner file (not required at runtime).
 - [.nojekyll](.nojekyll): Prevents GitHub Pages Jekyll processing.
 
-## Why README Is Not Visible On The Web App
-
-GitHub Pages renders [index.html](index.html) as the page content.
-
-A README file is repository documentation and is not injected into [index.html](index.html), so adding this file does not change the UI.
-
-## Run Locally
-
-You can open [index.html](index.html) directly in a browser.
-
-Requirements:
-
-- internet access for Tau Prolog CDN script
-
-Optional local server (if you prefer):
-
-```bash
-python3 -m http.server 8080
-```
-
-Then open `http://localhost:8080`.
-
-## Deploy To GitHub Pages
-
-1. Push this repo to GitHub as `greek-meal-planner`.
-2. In GitHub repo settings, enable **Pages** from branch `main` (root).
-3. Visit:
-   - `https://mlliarm.github.io/greek-meal-planner/`
-
 ## Future Improvements
 
 - Add dish editor UI (add/remove dishes without code changes).
