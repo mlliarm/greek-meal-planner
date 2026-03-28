@@ -10,6 +10,7 @@ const I18N = {
     pageSubtitle: 'Logic-based planning · Nutritionally balanced · Never boring',
     buttonPlanThisWeek: 'Plan This Week',
     buttonPlanNextWeek: 'Plan Next Week',
+    buttonDownload: 'Download',
     statusLoading: 'Loading...',
     statusInitialising: 'Initialising Tau Prolog...',
     statusReady: 'Ready - click "Plan This Week" to generate your first meal plan.',
@@ -48,6 +49,7 @@ const I18N = {
     pageSubtitle: 'Προγραμματισμός με λογική · Ισορροπημένη διατροφή · Χωρίς μονοτονία',
     buttonPlanThisWeek: 'Προγραμμάτισε Αυτή την Εβδομάδα',
     buttonPlanNextWeek: 'Προγραμμάτισε Επόμενη Εβδομάδα',
+    buttonDownload: 'Κατέβασέ το',
     statusLoading: 'Φόρτωση...',
     statusInitialising: 'Αρχικοποίηση Tau Prolog...',
     statusReady: 'Έτοιμο - πάτησε "Προγραμμάτισε Αυτή την Εβδομάδα" για το πρώτο πλάνο.',
@@ -287,6 +289,59 @@ function getAllowedOverlap(poolSize) {
   return Math.max(targetMaxOverlap, minimumFeasibleOverlap);
 }
 
+function downloadAsJSON(data, filename) {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+async function exportTableAsPDF() {
+  try {
+    const table = document.querySelector('#plan-table');
+    if (!table) return;
+
+    const canvas = await html2canvas(table, { scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+    
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('l', 'mm', 'a4');
+    
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - 20;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    pdf.save('meal-plan.pdf');
+  } catch (e) {
+    setStatusT('statusError', 'error', { error: 'Failed to export PDF: ' + e.message });
+  }
+}
+
+async function exportTableAsPNG() {
+  try {
+    const table = document.querySelector('#plan-table');
+    if (!table) return;
+
+    const canvas = await html2canvas(table, { scale: 2, backgroundColor: '#ffffff' });
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'meal-plan.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (e) {
+    setStatusT('statusError', 'error', { error: 'Failed to export PNG: ' + e.message });
+  }
+}
+
 function writeStatus(msg, type = 'info') {
   const el = document.getElementById('status');
   if (!el) return;
@@ -353,6 +408,7 @@ function applyLanguage() {
   setText('page-subtitle', t('pageSubtitle'));
   setText('btn-generate', t('buttonPlanThisWeek'));
   setText('btn-new-week', t('buttonPlanNextWeek'));
+    setText('btn-download-text', '⬇ ' + t('buttonDownload'));
 
   setText('th-day', t('headerDay'));
   setText('th-dish', t('headerDish'));
@@ -521,10 +577,12 @@ function renderPlan(ids) {
 async function generatePlan(enforceVariety) {
   const btnGenerate = document.getElementById('btn-generate');
   const btnNewWeek = document.getElementById('btn-new-week');
+  const btnDownload = document.getElementById('btn-download');
 
   setStatusT('statusPlanning', 'info');
   if (btnGenerate) btnGenerate.disabled = true;
   if (btnNewWeek) btnNewWeek.disabled = true;
+  if (btnDownload) btnDownload.disabled = true;
 
   try {
     let plan = null;
@@ -573,6 +631,7 @@ async function generatePlan(enforceVariety) {
     renderPlan(plan);
     previousPlan = plan;
     if (btnNewWeek) btnNewWeek.disabled = false;
+    if (btnDownload) btnDownload.disabled = false;
 
     if (enforceVariety) {
       setStatusT('statusNewWeekPlanned', 'success', { allowedOverlap });
@@ -589,11 +648,15 @@ async function generatePlan(enforceVariety) {
 document.addEventListener('DOMContentLoaded', async () => {
   const btnGenerate = document.getElementById('btn-generate');
   const btnNewWeek = document.getElementById('btn-new-week');
+  const btnDownload = document.getElementById('btn-download');
+  const btnDownloadPdf = document.getElementById('btn-download-pdf');
+  const btnDownloadPng = document.getElementById('btn-download-png');
   const btnLangEn = document.getElementById('lang-en');
   const btnLangEl = document.getElementById('lang-el');
 
   if (btnGenerate) btnGenerate.disabled = true;
   if (btnNewWeek) btnNewWeek.disabled = true;
+  if (btnDownload) btnDownload.disabled = true;
 
   applyLanguage();
   setStatusT('statusInitialising', 'info');
@@ -627,4 +690,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (btnLangEl) {
     btnLangEl.addEventListener('click', () => setLanguage('el'));
   }
+
+  if (btnDownload) {
+    btnDownload.addEventListener('click', () => {
+      const menu = document.querySelector('.download-options');
+      if (menu) menu.classList.toggle('show');
+    });
+  }
+
+  if (btnDownloadPdf) {
+    btnDownloadPdf.addEventListener('click', async () => {
+      await exportTableAsPDF();
+      const menu = document.querySelector('.download-options');
+      if (menu) menu.classList.remove('show');
+    });
+  }
+
+  if (btnDownloadPng) {
+    btnDownloadPng.addEventListener('click', async () => {
+      await exportTableAsPNG();
+      const menu = document.querySelector('.download-options');
+      if (menu) menu.classList.remove('show');
+    });
+  }
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    const menu = document.querySelector('.download-menu');
+    if (menu && !menu.contains(e.target)) {
+      const options = document.querySelector('.download-options');
+      if (options) options.classList.remove('show');
+    }
+  });
 });

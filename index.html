@@ -8,6 +8,10 @@
 
   <!-- Tau Prolog core -->
   <script src="https://cdn.jsdelivr.net/npm/tau-prolog@0.3.2/modules/core.js"></script>
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -33,6 +37,13 @@
     <section class="controls">
       <button id="btn-generate">Plan This Week</button>
       <button id="btn-new-week" disabled>Plan Next Week</button>
+      <div class="download-menu">
+          <button id="btn-download" class="download-btn" disabled><span id="btn-download-text">⬇ Download</span></button>
+        <div class="download-options">
+          <button id="btn-download-pdf" class="download-option">📄 PDF</button>
+          <button id="btn-download-png" class="download-option">🖼️ PNG</button>
+        </div>
+      </div>
     </section>
 
     <p id="status" class="status info">Loading…</p>
