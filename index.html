@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greek Meal Planner</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Tau Prolog core -->
+  <script src="https://cdn.jsdelivr.net/npm/tau-prolog@0.3.2/modules/core.js"></script>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand-block">
+        <span class="logo">🫒</span>
+        <div>
+          <h1 id="page-title">Greek Weekly Meal Planner</h1>
+          <p id="page-subtitle">Logic-based planning · Nutritionally balanced · Never boring</p>
+        </div>
+      </div>
+
+      <div class="lang-switch" aria-label="Language switcher">
+        <button id="lang-en" class="lang-btn" type="button" title="English" aria-label="Switch to English">🇬🇧</button>
+        <button id="lang-el" class="lang-btn" type="button" title="Ελληνικά" aria-label="Switch to Greek">🇬🇷</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="controls">
+      <button id="btn-generate">Plan This Week</button>
+      <button id="btn-new-week" disabled>Plan Next Week</button>
+    </section>
+
+    <p id="status" class="status info">Loading…</p>
+
+    <div class="table-wrapper">
+      <table id="plan-table">
+        <thead>
+          <tr>
+            <th id="th-day">Day</th>
+            <th id="th-dish">Dish</th>
+            <th id="th-kcal" title="kilocalories">kcal</th>
+            <th id="th-protein" title="grams of protein">Protein (g)</th>
+            <th id="th-carbs" title="grams of carbohydrates">Carbs (g)</th>
+            <th id="th-fat" title="grams of fat">Fat (g)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+
+    <aside class="legend" id="variety-legend">
+      <strong>Variety rule:</strong> keeping the next week at or below 50% overlap with the
+      previous week, while preserving the same nutritional balance (±15% per macro).
+    </aside>
+
+  </main>
+
+  <a
+    class="github-link"
+    href="https://github.com/mlliarm/greek-meal-planner"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open project on GitHub"
+  >
+    GitHub
+  </a>
+
+  <script src="app.js"></script>
+</body>
+</html>
